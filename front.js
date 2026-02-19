@@ -1,10 +1,33 @@
 $(document).ready(function () {
   /* --------------- Materialize initializations --------------- */
   // Filters
-  $("select").formSelect();
+  var selectConfig = {
+    dropdownOptions: {
+      constrainWidth: false,
+      coverTrigger: false,
+    },
+  };
+  $("select").formSelect(selectConfig);
 
   // Home - Intro Slider
-  $(".slider").slider();
+  $(".slider").slider({
+    indicators: true,
+    interval: 4800,
+  });
+
+  // Navigation
+  $(".sidenav").sidenav();
+  $(".scrollspy").scrollSpy({
+    scrollOffset: 100,
+  });
+
+  $(".sidenav a").on("click", function () {
+    var sidenavElement = document.getElementById("mobile-nav");
+    var sidenavInstance = M.Sidenav.getInstance(sidenavElement);
+    if (sidenavInstance) {
+      sidenavInstance.close();
+    }
+  });
 
   // Initialize Instructions Carousel
   /*Ingredients carousel*/
@@ -86,31 +109,73 @@ $(document).ready(function () {
     },
   };
   var numberOfRndSuggestions = 3;
-  var cont2 = 0;
 
   /* ************************** Functions ************************ */
   /* --------------- Global --------------- */
-  function runAjax(name, url, thenFunction, instruc, stepsLength) {
+  function showToast(message) {
+    if (window.M && M.toast) {
+      M.toast({
+        html: message,
+        classes: "lime darken-4",
+      });
+    }
+  }
+
+  function setContextNavigationVisible(visible) {
+    if (visible) {
+      $(".nav-item-context").removeClass("nav-item-hidden");
+      return;
+    }
+    $(".nav-item-context").addClass("nav-item-hidden");
+  }
+
+  function setLoading(isLoading) {
+    if (isLoading) {
+      $("#globalLoader").stop(true, true).fadeIn(120);
+      return;
+    }
+    $("#globalLoader").stop(true, true).fadeOut(120);
+  }
+
+  function runAjax(
+    name,
+    url,
+    thenFunction,
+    instruc,
+    stepsLength,
+    failFunction
+  ) {
     $.ajax({
       url: url,
       method: "GET",
-    }).then(function (response) {
-      if (thenFunction) {
-        thenFunction(name, response, instruc, stepsLength);
-      }
-    });
+    })
+      .done(function (response) {
+        if (thenFunction) {
+          thenFunction(name, response, instruc, stepsLength);
+        }
+      })
+      .fail(function (error) {
+        if (failFunction) {
+          failFunction(name, error, instruc, stepsLength);
+        }
+      });
   }
 
   /* --------------- Search --------------- */
 
   function searchDrink(drink) {
-    cont2 = 0;
+    var sanitizedDrink = (drink || "").trim();
+    if (!sanitizedDrink) {
+      showToast("Type a drink name first.");
+      return;
+    }
+
+    setLoading(true);
 
     // Empty the ingredients carousel
     $("#ingredientsContent").empty();
 
     // Empty the instructions
-    $("#preparationContent").empty();
     $("#preparationCollap").empty();
     $("#mainImage").empty();
     // Empty the articles
@@ -124,58 +189,79 @@ $(document).ready(function () {
 
     runAjax(
       "drinkSearch",
-      queryURLs.search.cocktailByNameF(drink),
-      uploadSearch
+      queryURLs.search.cocktailByNameF(sanitizedDrink),
+      uploadSearch,
+      null,
+      null,
+      function () {
+        setLoading(false);
+        showToast("Could not load that drink. Please try again.");
+      }
     );
   }
 
-  $("#searchButton").on("click", function (event) {
+  $("#searchForm").on("submit", function (event) {
     event.preventDefault();
-    cocktailName = $("#drinkInput").val();
+    cocktailName = ($("#drinkInput").val() || "").trim();
     searchDrink(cocktailName);
   });
 
   /* --------------- Filter --------------- */
-  $(document).ready(function () {
-    $("select.categoryFilter").change(function () {
-      runUploadSuggested();
-      var selectCat = $(this).children("option:selected").val();
+  $("select.categoryFilter").change(function () {
+    runUploadSuggested();
+    var selectCat = ($(this).children("option:selected").val() || "").trim();
+    if (selectCat.toLowerCase() === "main" || selectCat === "") {
+      return;
+    }
 
-      runAjax(
-        "drinkSearch",
-        queryURLs.filter.categoryF(selectCat),
-        getDrinkName
-      );
-      $(this).formSelect();
-      $(this).children("option[value=main]").attr("selected", "");
-    });
-    $("select.ingredientFilter").change(function () {
-      runUploadSuggested();
-      var selectIng = $(this).children("option:selected").val();
-      runAjax(
-        "drinkSearch",
-        queryURLs.filter.ingredientF(selectIng),
-        getDrinkName
-      );
-    });
-    $("select.glassFilter").change(function () {
-      runUploadSuggested();
-      var selectGlass = $(this).children("option:selected").val();
-      runAjax(
-        "drinkSearch",
-        queryURLs.filter.glassF(selectGlass),
-        getDrinkName
-      );
-    });
+    runAjax("drinkSearch", queryURLs.filter.categoryF(selectCat), getDrinkName);
+    $(this).formSelect(selectConfig);
+    $(this).children("option[value=main]").attr("selected", "");
+  });
+
+  $("select.ingredientFilter").change(function () {
+    runUploadSuggested();
+    var selectIng = ($(this).children("option:selected").val() || "").trim();
+    if (selectIng === "") {
+      return;
+    }
+
+    runAjax("drinkSearch", queryURLs.filter.ingredientF(selectIng), getDrinkName);
+  });
+
+  $("select.glassFilter").change(function () {
+    runUploadSuggested();
+    var selectGlass = ($(this).children("option:selected").val() || "").trim();
+    if (
+      selectGlass === "" ||
+      selectGlass.toLowerCase() === "main" ||
+      selectGlass.toLowerCase() === "glass type"
+    ) {
+      return;
+    }
+
+    runAjax("drinkSearch", queryURLs.filter.glassF(selectGlass), getDrinkName);
   });
 
   function getDrinkName(name, resp) {
-    cocktailName = resp.drinks[Math.floor(Math.random() * 10)].strDrink;
+    if (!resp || !resp.drinks || resp.drinks.length === 0) {
+      showToast("No drinks found for that filter.");
+      return;
+    }
+
+    cocktailName =
+      resp.drinks[Math.floor(Math.random() * resp.drinks.length)].strDrink;
     searchDrink(cocktailName);
   }
   /* --------------- Drink ---------------- */
   // upload search results
   function uploadSearch(name, resp) {
+    if (!resp || !resp.drinks || resp.drinks.length === 0) {
+      setLoading(false);
+      showToast("No drink found with that name.");
+      return;
+    }
+
     resp = resp.drinks[0];
     $("#drinkNameH4").text(resp.strDrink);
 
@@ -186,23 +272,32 @@ $(document).ready(function () {
     mainImageJumbo.append(mainImg);
     mainImageJumbo.addClass("col s12 m6 offset-m3 l6 offset-l3");
 
+    setContextNavigationVisible(true);
     ingredients(resp);
-    instructionsSteps(resp.strInstructions);
+    instructionsSteps(resp.strInstructions, resp);
     getArticles(resp.strDrink);
+    setLoading(false);
   }
 
   /* --------------- Ingredients ---------------- */
-  function ingredients(resp) {
-    $("#ingredientsList").empty();
-
-    // Get the ingredients list
+  function getDrinkIngredients(resp) {
     var ingrArray = [];
+
     Object.entries(resp).forEach(function (entry) {
       let subKey = entry[0].substring(0, 13);
       if (subKey === "strIngredient" && entry[1] != null) {
         ingrArray.push(entry[1]);
       }
     });
+
+    return ingrArray;
+  }
+
+  function ingredients(resp) {
+    $("#ingredientsList").empty();
+
+    // Get the ingredients list
+    var ingrArray = getDrinkIngredients(resp);
 
     for (let j = 0; j < ingrArray.length; j++) {
       // Display ingredients list
@@ -235,63 +330,211 @@ $(document).ready(function () {
   // Another Giphy API Key: kYlC1mU6XZtCjjMbaFOQr4Y52hj0VQYx
 
   var giphyAPIKey = "GIPHY_API_KEY_REDACTED";
-  var carouselInstance;
-  function makegiphyURL(value, Instruction, stepsLength) {
-    var giphyURL =
-      "https://cors-anywhere.herokuapp.com/https://api.giphy.com/v1/gifs/search?q=" +
-      value +
-      "&api_key=" +
-      giphyAPIKey;
-    // Carousel
-    runAjax("carousel", giphyURL, getGiphies, Instruction, stepsLength);
+  function normalizeText(text) {
+    return (text || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
   }
 
-  function getGiphies(name, resp, instruc, stepsLength) {
-    console.log("getGiphies()");
+  function makegiphyURL(query) {
+    return (
+      "https://api.giphy.com/v1/gifs/search?q=" +
+      encodeURIComponent(query) +
+      "&limit=25&rating=g&lang=en&sort=relevant&api_key=" +
+      giphyAPIKey
+    );
+  }
 
-    var elem = document.querySelector(".collapsible");
-    var instance = M.Collapsible.init(elem, {
-      accordion: false,
+  function matchesIngredientInStep(stepText, ingredientName) {
+    var normalizedStep = normalizeText(stepText);
+    var normalizedIngredient = normalizeText(ingredientName);
+
+    if (normalizedStep.indexOf(normalizedIngredient) >= 0) {
+      return true;
+    }
+
+    var ingredientTokens = normalizedIngredient
+      .split(/[^a-z0-9]+/)
+      .filter(function (token) {
+        return token.length >= 4;
+      });
+
+    for (let i = 0; i < ingredientTokens.length; i++) {
+      if (normalizedStep.indexOf(ingredientTokens[i]) >= 0) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function getInstructionIngredients(instruction, drinkIngredients) {
+    var stepIngredients = [];
+
+    for (let i = 0; i < drinkIngredients.length; i++) {
+      if (matchesIngredientInStep(instruction, drinkIngredients[i])) {
+        stepIngredients.push(drinkIngredients[i]);
+      }
+    }
+
+    return stepIngredients.slice(0, 2);
+  }
+
+  function buildGifQueryFallbacks(verb, stepIngredients, drinkInfo) {
+    var queries = [];
+    var ingredientContext = stepIngredients.join(" ").trim();
+    var glassContext = (drinkInfo && drinkInfo.strGlass) || "";
+    var categoryContext = (drinkInfo && drinkInfo.strCategory) || "";
+
+    if (ingredientContext !== "") {
+      queries.push(verb + " " + ingredientContext + " cocktail");
+      if (glassContext !== "") {
+        queries.push(verb + " " + ingredientContext + " " + glassContext);
+      }
+      if (categoryContext !== "") {
+        queries.push(verb + " " + ingredientContext + " " + categoryContext);
+      }
+    }
+
+    if (glassContext !== "") {
+      queries.push(verb + " " + glassContext + " cocktail");
+    }
+    if (categoryContext !== "") {
+      queries.push(verb + " " + categoryContext + " cocktail");
+    }
+
+    queries.push(verb + " cocktail");
+    queries.push(verb);
+
+    var uniqueQueries = [];
+    for (let i = 0; i < queries.length; i++) {
+      var query = queries[i].replace(/\s+/g, " ").trim();
+      if (query !== "" && uniqueQueries.indexOf(query) === -1) {
+        uniqueQueries.push(query);
+      }
+    }
+
+    return uniqueQueries;
+  }
+
+  function getBestGifURL(resp, verb, stepIngredients) {
+    if (!resp || !resp.data || resp.data.length === 0) {
+      return "";
+    }
+
+    var bestURL = "";
+    var bestScore = -1;
+    var normalizedVerb = normalizeText(verb);
+    var ingredientTokens = [];
+
+    stepIngredients.forEach(function (ingredient) {
+      normalizeText(ingredient)
+        .split(/[^a-z0-9]+/)
+        .forEach(function (token) {
+          if (token.length >= 4) {
+            ingredientTokens.push(token);
+          }
+        });
     });
 
-    instance.open(0);
+    for (let i = 0; i < resp.data.length; i++) {
+      var gif = resp.data[i];
+      var gifURL =
+        gif &&
+        gif.images &&
+        gif.images.fixed_height &&
+        gif.images.fixed_height.url;
+      if (!gifURL) {
+        continue;
+      }
 
+      var gifText = normalizeText(
+        (gif.title || "") + " " + (gif.slug || "") + " " + (gif.alt_text || "")
+      );
+
+      var score = 0;
+      if (gifText.indexOf(normalizedVerb) >= 0) {
+        score += 4;
+      }
+      if (gifText.indexOf("cocktail") >= 0 || gifText.indexOf("drink") >= 0) {
+        score += 2;
+      }
+
+      for (let j = 0; j < ingredientTokens.length; j++) {
+        if (gifText.indexOf(ingredientTokens[j]) >= 0) {
+          score += 2;
+        }
+      }
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestURL = gifURL;
+      }
+    }
+
+    return bestURL;
+  }
+
+  function fetchStepGif(queries, targetImage, verb, stepIngredients, queryIndex) {
+    if (!targetImage || !queries || queryIndex >= queries.length) {
+      return;
+    }
+
+    var giphyURL = makegiphyURL(queries[queryIndex]);
+    runAjax(
+      "stepGif",
+      giphyURL,
+      function (name, resp) {
+        var gifURL = getBestGifURL(resp, verb, stepIngredients);
+        if (gifURL !== "") {
+          targetImage.attr("src", gifURL);
+          targetImage.show();
+          return;
+        }
+
+        fetchStepGif(queries, targetImage, verb, stepIngredients, queryIndex + 1);
+      },
+      null,
+      null,
+      function () {
+        fetchStepGif(queries, targetImage, verb, stepIngredients, queryIndex + 1);
+      }
+    );
+  }
+
+  function addPreparationStep(stepNumber, instruction) {
     var prepCollapsibleSection = $("#preparationCollap");
-
     var prepStep = $("<li>");
     var prepStepHead = $("<div>");
     var prepStepBody = $("<div>");
     var itemSpan = $("<div>");
-    var carouselItemImg = $("<img>");
+    var stepImg = $("<img>");
 
     prepStepHead.addClass("collapsible-header prepStep");
     prepStepBody.addClass("collapsible-body");
     prepStepBody.attr("style", "text-align:center");
-    carouselItemImg.attr(
-      "src",
-      resp.data[Math.floor(Math.random() * 10)].images.fixed_height.url
-    );
-    itemSpan.text(instruc);
-    prepStepHead.text("Step " + (cont2 + 1));
-    carouselItemImg.addClass("item");
+    prepStepHead.text("Step " + stepNumber);
+    itemSpan.text(instruction);
+
+    stepImg.addClass("item");
+    stepImg.hide();
+
     prepStepBody.append(itemSpan);
-    prepStepBody.append(carouselItemImg);
+    prepStepBody.append(stepImg);
     prepStep.append(prepStepHead);
     prepStep.append(prepStepBody);
     prepCollapsibleSection.append(prepStep);
 
-    if (cont2 == stepsLength - 1) {
-      // Initialize Instructions Carousel
-      $("#preparationContent").carousel();
-    }
-    cont2++;
+    return stepImg;
   }
 
-  function instructionsSteps(instructions, giphy) {
+  function instructionsSteps(instructions, drinkInfo) {
     console.log("instructionsSteps()");
-    var instSteps = instructions;
+    var instSteps = instructions || "";
     var steps = [];
     var step = "";
+    var drinkIngredients = drinkInfo ? getDrinkIngredients(drinkInfo) : [];
 
     for (let i = 0; i < instSteps.length; i++) {
       if (
@@ -299,12 +542,17 @@ $(document).ready(function () {
         instSteps[i - 1] != "z" &&
         instSteps[i - 2] != "o"
       ) {
-        steps.push(step);
+        if (step.trim().length > 0) {
+          steps.push(step.trim());
+        }
         step = "";
         i++;
       } else {
         step = step + instSteps[i];
       }
+    }
+    if (step.trim().length > 0) {
+      steps.push(step.trim());
     }
 
     // getting action verbs from the intructions
@@ -344,15 +592,41 @@ $(document).ready(function () {
       "cream",
       "served",
     ];
-    var cont1 = 0;
+
     for (let j = 0; j < steps.length; j++) {
       var temp = steps[j].toLowerCase();
       var instruction = steps[j];
+      var stepImage = addPreparationStep(j + 1, instruction);
+      var stepIngredients = getInstructionIngredients(
+        instruction,
+        drinkIngredients
+      );
+      var matchedVerb = "";
+
       for (let i = 0; i < verbs.length; i++) {
         if (temp.search(verbs[i]) >= 0) {
-          makegiphyURL(verbs[i], instruction, steps.length);
+          matchedVerb = verbs[i];
           break;
         }
+      }
+
+      if (matchedVerb !== "") {
+        var gifQueries = buildGifQueryFallbacks(
+          matchedVerb,
+          stepIngredients,
+          drinkInfo
+        );
+        fetchStepGif(gifQueries, stepImage, matchedVerb, stepIngredients, 0);
+      }
+    }
+
+    var elem = document.querySelector(".collapsible");
+    if (elem) {
+      var instance = M.Collapsible.init(elem, {
+        accordion: false,
+      });
+      if (steps.length > 0) {
+        instance.open(0);
       }
     }
     console.log("steps: ", steps);
@@ -370,6 +644,9 @@ $(document).ready(function () {
 
   function displayArticles(name, resp) {
     //("*********** displayArticles() ***********")
+    if (!resp || !resp.response || !resp.response.docs) {
+      return;
+    }
 
     respArray = resp.response.docs;
     var contaArt = 0;
@@ -420,7 +697,7 @@ $(document).ready(function () {
         cardActionDiv.attr("class", "card-action");
         a.attr("href", article.web_url);
         a.attr("target", "_blank");
-        a.text("Go to the article!");
+        a.text("Read article");
 
         cardImageDiv.append(span);
         cardContentDiv.append(p);
@@ -443,7 +720,7 @@ $(document).ready(function () {
     $(".randomSuggest").empty();
 
     // Trigger new ones
-    for (i = 0; i < numberOfRndSuggestions; i++) {
+    for (let i = 0; i < numberOfRndSuggestions; i++) {
       runAjax(
         "randomSuggest",
         queryURLs.lookup.randomCocktail,
@@ -454,6 +731,10 @@ $(document).ready(function () {
 
   function uploadSuggested(name, res) {
     console.log("uploadSuggested()");
+    if (!res || !res.drinks || res.drinks.length === 0) {
+      return;
+    }
+
     res = res.drinks[0];
     var colDiv = $("<div>");
     var cardDiv = $("<div>");
@@ -473,7 +754,7 @@ $(document).ready(function () {
     actionDiv.attr("class", "card-action");
     aTag.attr("href", "#");
     aTag.attr("drink", res.strDrink);
-    aTag.text("Go to the drink!");
+    aTag.text("View recipe");
 
     cardImgDiv.append(imgTag);
     cardImgDiv.append(spanTag);
@@ -486,20 +767,48 @@ $(document).ready(function () {
 
   // Suggested Drink selection
   $(".randomSuggest").on("click", function (event) {
+    var selectedDrinkLink = event.target.closest("a[drink]");
+    if (!selectedDrinkLink) {
+      return;
+    }
+
     event.preventDefault();
-    $(window).scrollTop(0);
-    cocktailName = event.target.getAttribute("drink");
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+    cocktailName = selectedDrinkLink.getAttribute("drink");
     if (cocktailName != undefined) {
       localStorage.setItem("last", cocktailName);
       searchDrink(cocktailName);
     }
   });
 
+  function toggleScrollTopButton() {
+    if ($(window).scrollTop() > 320) {
+      $("#scrollTopBtn").addClass("is-visible");
+      return;
+    }
+    $("#scrollTopBtn").removeClass("is-visible");
+  }
+
+  $("#scrollTopBtn").on("click", function (event) {
+    event.preventDefault();
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  });
+
   /* ********************** Event Listeners ********************** */
   runUploadSuggested();
+  setLoading(false);
+  setContextNavigationVisible(false);
   $(".drinkIngredSection").hide();
   $("#carouselBody").hide();
   $(".preparationSection").hide();
   $(".articlesSection").hide();
   $("#ingredientsContent").hide();
+  toggleScrollTopButton();
+  $(window).on("scroll", toggleScrollTopButton);
 });

@@ -1,50 +1,432 @@
+:root {
+  --olive-950: #3e3f15;
+  --olive-900: #4e4f1d;
+  --olive-700: #827717;
+  --olive-500: #afb42b;
+  --paper-100: #f4f7e8;
+  --paper-200: #ebefd8;
+  --surface: #ffffff;
+  --shadow-soft: 0 8px 22px rgba(20, 20, 12, 0.12);
+  --nav-height: 128px;
+  --nav-height-tablet: 104px;
+  --nav-height-mobile: 90px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: radial-gradient(
+    circle at top,
+    var(--paper-100) 0%,
+    var(--paper-200) 45%,
+    #e4e9d2 100%
+  );
+  color: #1f1f1f;
+}
+
+.container {
+  width: 92%;
+  max-width: 1180px;
+}
+
+.section-block {
+  scroll-margin-top: calc(var(--nav-height) + 10px);
+}
+
+#searchAndFiltersSection {
+  margin-top: 28px;
+  margin-bottom: 12px;
+}
+
+#globalLoader {
+  display: none;
+  margin: 14px 0 20px;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.navbar-fixed {
+  height: var(--nav-height) !important;
+}
+
+nav.nav-shell {
+  height: var(--nav-height) !important;
+  min-height: var(--nav-height) !important;
+  line-height: var(--nav-height) !important;
+  background: linear-gradient(120deg, #7f8c1d 0%, #9ea72d 55%, #5f7e2e 100%);
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.2);
+}
+
+nav.nav-shell .nav-wrapper {
+  height: var(--nav-height) !important;
+  min-height: var(--nav-height) !important;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+nav.nav-shell .sidenav-trigger,
+nav.nav-shell .sidenav-trigger i {
+  position: static;
+  margin: 0;
+  height: var(--nav-height) !important;
+  line-height: var(--nav-height) !important;
+  color: #fffde7;
+}
+
+nav.nav-shell .brand-logo.wikidrinks-logo {
+  position: static !important;
+  transform: none !important;
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 5px;
+  white-space: normal !important;
+  line-height: 1.05 !important;
+  height: calc(var(--nav-height) - 24px) !important;
+  min-height: 0;
+  max-height: calc(var(--nav-height) - 24px);
+  min-width: 360px;
+  max-width: 430px;
+  padding: 10px 16px 9px;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+}
+
+.logo-main-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  flex: 0 0 auto;
+}
+
+.wikidrinks-logo .material-icons {
+  font-size: 30px;
+  color: #fff7c2;
+  margin-right: 0;
+}
+
+.logo-word {
+  font-family: "Trebuchet MS", "Gill Sans", "Century Gothic", sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.logo-word-main {
+  color: #fff8cc;
+}
+
+.logo-word-accent {
+  color: #ffffff;
+}
+
+.logo-tagline {
+  margin-left: 42px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 9px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  width: 100%;
+  line-height: 1.2;
+}
+
+#nav-desktop {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+  margin: 0;
+}
+
+#nav-desktop li {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+}
+
+#nav-desktop li a {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  line-height: 1.15;
+  color: #fffde7;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  font-size: 13px;
+  padding: 0 16px;
+  border-bottom: 3px solid transparent;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+#nav-desktop li a:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  border-bottom-color: #f0f4c3;
+}
+
+#nav-desktop li > a.active {
+  border-bottom-color: #fffde7;
+  background-color: transparent;
+}
+
+.nav-shell ul li.active,
+.nav-shell ul li.active > a {
+  background-color: transparent !important;
+}
+
+.nav-item-hidden {
+  display: none !important;
+}
+
+.sidenav {
+  background-color: var(--paper-100);
+}
+
+.sidenav li > a {
+  color: var(--olive-900);
+  font-weight: 700;
+}
+
 .wdt-btn {
   width: 100px;
 }
 
-.filter-margin {
-  margin-top: 15px;
+.inputForm {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 0;
+  margin-bottom: 0;
+  box-shadow: none !important;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
 }
+
+.inputForm .input-field {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.search-field.input-field {
+  margin-top: 0;
+}
+
+.inputForm > .search-field {
+  flex: 0 1 40%;
+  padding-left: 0;
+}
+
+.inputForm > .search-btn-wrap {
+  flex: 0 0 190px;
+}
+
+.inputForm > .randomBy {
+  flex: 1 1 430px;
+}
+
+.filter-margin {
+  margin-top: 0;
+}
+
+.search-btn-wrap {
+  min-height: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 10px 10px;
+}
+
+#searchButton {
+  width: 100%;
+  max-width: 180px;
+  border-radius: 11px;
+  text-transform: none;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  height: 40px;
+  line-height: 40px;
+  color: #f8f9e6;
+  background: #6b7218;
+  border: 1px solid #5b6112;
+  box-shadow: none;
+}
+
+#searchButton:hover,
+#searchButton:focus {
+  background: #5c6213;
+}
+
+.randomBy {
+  border-left: 1px dashed rgba(78, 79, 29, 0.28);
+  padding-left: 14px;
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.randomBy > .filter-title {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 94px;
+  float: none;
+  padding: 0;
+  margin: 0;
+}
+
+.randomBy > .col {
+  float: none;
+  flex: 1 1 0;
+  min-width: 120px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.filter-title {
+  color: rgba(62, 63, 21, 0.92);
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.filter-title.input-field {
+  margin-top: 0;
+  margin-bottom: 13px;
+  line-height: 1.2;
+}
+
+.search-field .helper-text {
+  color: rgba(78, 79, 29, 0.75) !important;
+  font-size: 12px;
+}
+
+.inputForm #drinkInput {
+  color: #2c2d11;
+}
+
+.inputForm .input-field > label {
+  color: rgba(62, 63, 21, 0.72);
+}
+
+.inputForm .material-icons.prefix {
+  color: rgba(62, 63, 21, 0.85);
+}
+
+.inputForm .select-wrapper input.select-dropdown {
+  color: #2f3213;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(62, 63, 21, 0.45);
+  margin-bottom: 0;
+  padding-right: 24px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  font-size: 16px;
+}
+
+.inputForm .select-wrapper input.select-dropdown:focus {
+  border-bottom: 1px solid #7f8424;
+}
+
+.inputForm .select-wrapper .caret {
+  fill: #4e4f1d;
+}
+
 .img-hgt {
   height: 250px;
+  object-fit: cover;
 }
+
 .slider .indicators .indicator-item.active {
-  background-color: #827717;
+  background-color: var(--olive-700);
+}
+
+.slider .slides li img {
+  filter: brightness(0.82) contrast(0.98) saturate(0.95);
+}
+
+.slider {
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+}
+
+.slider .caption {
+  top: auto;
+  bottom: 11%;
+  left: 8%;
+  right: 8%;
+  transform: none;
+}
+
+.slider .caption h3 {
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
+  margin: 0;
+  display: inline-block;
+  max-width: 86%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(14, 14, 10, 0.45);
+  font-size: clamp(1.45rem, 3vw, 2.55rem);
+  line-height: 1.15;
 }
 
 .input-field .prefix.active {
-  color: #827717;
-}
-
-.ilike-lime-container {
-  @extend .lime, .lighten-4;
-}
-
-.ilike-lime-container {
-  @extend .lime-text, .text-lighten-4;
+  color: var(--olive-700);
 }
 
 .active {
-  color: #827717;
+  color: var(--olive-700);
 }
 
 label.active {
-  color: #827717 !important;
+  color: var(--olive-700) !important;
 }
 
 input:focus {
-  border-bottom: 1px solid #827717 !important;
-  box-shadow: 0 1px 0 0 #827717 !important;
+  border-bottom: 1px solid var(--olive-700) !important;
+  box-shadow: 0 1px 0 0 var(--olive-700) !important;
 }
 
 ul.dropdown-content.select-dropdown li span {
-  color: #827717 !important;
+  color: var(--olive-700) !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+}
+
+ul.dropdown-content.select-dropdown {
+  max-height: 280px !important;
+  overflow-y: auto !important;
+  min-width: 230px !important;
+  max-width: 320px !important;
+  border-radius: 12px;
 }
 
 .card
   .card-action
   a:not(.btn):not(.btn-large):not(.btn-small):not(.btn-large):not(.btn-floating) {
-  color: #827717;
+  color: var(--olive-700);
+}
+
+.card {
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 26px rgba(20, 20, 12, 0.2);
 }
 
 .borderdown {
@@ -67,18 +449,23 @@ ul.dropdown-content.select-dropdown li span {
   text-align: right;
 }
 
-.nav-hgt {
-  height: 130px;
-}
-
 .drinktxtcol {
   color: white;
   text-align: center;
   height: 100%;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: var(--shadow-soft);
 }
 
-#mainImage{
-  padding-bottom: 30px;
+#drinkNameH4 {
+  margin: 0;
+  padding: 16px 10px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+#mainImage {
+  padding: 18px 0 30px;
 }
 
 .drinkFixedWidth {
@@ -91,21 +478,25 @@ ul.dropdown-content.select-dropdown li span {
   margin-left: auto;
   margin-right: auto;
   width: 100%;
+  max-width: 460px;
+  border-radius: 14px;
 }
 
 .ingredSpan {
   text-align: center;
+  font-weight: 600;
 }
 
-.cardhgt{
+.cardhgt {
   height: 400px;
 }
-.pmar{
+
+.pmar {
   padding-left: 5px;
   padding-right: 5px;
 }
 
-/*carousel css*/
+/* carousel css */
 #carouselBody {
   margin: 0;
   display: flex;
@@ -118,6 +509,10 @@ ul.dropdown-content.select-dropdown li span {
   width: 100%;
   max-width: 964px;
   position: relative;
+  background: var(--surface);
+  border-radius: 18px;
+  padding: 14px 54px;
+  box-shadow: var(--shadow-soft);
 }
 
 #drinksCar {
@@ -135,7 +530,7 @@ ul.dropdown-content.select-dropdown li span {
   display: flex;
   justify-content: center;
   align-content: center;
-  background: #827717;
+  background: linear-gradient(120deg, var(--olive-700), var(--olive-500));
   border: none;
   padding: 8px;
   border-radius: 50%;
@@ -143,6 +538,7 @@ ul.dropdown-content.select-dropdown li span {
   cursor: pointer;
   position: absolute;
   color: white;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
 }
 
 #prev {
@@ -150,14 +546,12 @@ ul.dropdown-content.select-dropdown li span {
   left: 0;
   transform: translate(50%, -50%);
   display: none;
-  color: white;
 }
 
 #next {
   top: 50%;
   right: 0;
   transform: translate(-50%, -50%);
-  color: white;
 }
 
 #ingredientsContent {
@@ -166,24 +560,250 @@ ul.dropdown-content.select-dropdown li span {
   grid-auto-flow: column;
   margin: auto;
   box-sizing: border-box;
+  padding: 8px 0;
 }
-#preparationContent {
-  display: grid;
-  grid-gap: 16px;
-  grid-auto-flow: column;
-  margin: auto;
-  box-sizing: border-box;
-}
+
 .item {
   width: 200px;
   height: 200px;
   background: transparent;
+  object-fit: cover;
+  border-radius: 12px;
 }
 
 .ingredItemWrapDiv {
   text-align: center;
 }
 
-.prepStep{
+#preparationCollap .collapsible-header {
+  background: #f1f5dd;
+}
+
+#preparationCollap .collapsible-body {
+  background: #fafcee;
+  color: #343612;
+}
+
+#preparationCollap .collapsible-body div {
+  color: #2f3213;
+}
+
+.prepStep {
   font-weight: bold;
+  color: var(--olive-900);
+}
+
+#scrollTopBtn {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+#scrollTopBtn.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.page-footer {
+  margin-top: 36px;
+}
+
+@media only screen and (max-width: 992px) {
+  :root {
+    --nav-height: var(--nav-height-tablet);
+  }
+
+  .navbar-fixed {
+    height: var(--nav-height) !important;
+  }
+
+  nav.nav-shell {
+    height: var(--nav-height) !important;
+    min-height: var(--nav-height) !important;
+    line-height: var(--nav-height) !important;
+  }
+
+  nav.nav-shell .nav-wrapper {
+    height: var(--nav-height) !important;
+    min-height: var(--nav-height) !important;
+    padding: 0 12px;
+  }
+
+  nav.nav-shell .sidenav-trigger,
+  nav.nav-shell .sidenav-trigger i {
+    height: var(--nav-height) !important;
+    line-height: var(--nav-height) !important;
+  }
+
+  nav.nav-shell .brand-logo.wikidrinks-logo {
+    min-width: 300px;
+    max-width: 340px;
+    height: calc(var(--nav-height) - 20px) !important;
+    max-height: calc(var(--nav-height) - 20px);
+    padding: 9px 12px;
+  }
+
+  .wikidrinks-logo .material-icons {
+    font-size: 26px;
+  }
+
+  .logo-word {
+    font-size: 17px;
+  }
+
+  .logo-tagline {
+    font-size: 8px;
+    margin-left: 38px;
+  }
+
+  .section-block {
+    scroll-margin-top: calc(var(--nav-height) + 10px);
+  }
+
+  .randomBy {
+    border-left: none;
+    padding-left: 0;
+    gap: 8px;
+  }
+
+  .inputForm > .search-field,
+  .inputForm > .search-btn-wrap,
+  .inputForm > .randomBy {
+    flex: 1 1 100%;
+  }
+
+  .randomBy > .filter-title {
+    min-width: 0;
+    flex: 1 1 100%;
+    margin: 0 0 4px;
+  }
+
+  .randomBy > .col {
+    flex: 1 1 calc(33.33% - 6px);
+    min-width: 0;
+    padding-left: 0;
+    padding-right: 8px;
+  }
+
+  .search-btn-wrap {
+    min-height: auto;
+    margin: 0 0 8px;
+    justify-content: flex-start;
+    padding: 0;
+  }
+
+  .filter-title.input-field {
+    margin-top: 0;
+    margin-bottom: 4px;
+  }
+
+  #searchButton {
+    max-width: none;
+  }
+
+  .slider .caption {
+    bottom: 9%;
+  }
+
+  .slider .caption h3 {
+    max-width: 100%;
+  }
+
+  #wrapper {
+    padding: 10px 44px;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  :root {
+    --nav-height: var(--nav-height-mobile);
+  }
+
+  .navbar-fixed {
+    height: var(--nav-height) !important;
+  }
+
+  nav.nav-shell {
+    height: var(--nav-height) !important;
+    min-height: var(--nav-height) !important;
+    line-height: var(--nav-height) !important;
+  }
+
+  nav.nav-shell .nav-wrapper {
+    height: var(--nav-height) !important;
+    min-height: var(--nav-height) !important;
+  }
+
+  nav.nav-shell .sidenav-trigger,
+  nav.nav-shell .sidenav-trigger i {
+    height: var(--nav-height) !important;
+    line-height: var(--nav-height) !important;
+  }
+
+  nav.nav-shell .brand-logo.wikidrinks-logo {
+    min-width: 236px;
+    max-width: 265px;
+    height: calc(var(--nav-height) - 16px) !important;
+    max-height: calc(var(--nav-height) - 16px);
+    padding: 8px 10px 7px;
+    border-radius: 13px;
+  }
+
+  .wikidrinks-logo .material-icons {
+    font-size: 22px;
+    margin-right: 4px;
+  }
+
+  .logo-word {
+    font-size: 16px;
+  }
+
+  .logo-tagline {
+    display: none;
+  }
+
+  .container {
+    width: 94%;
+  }
+
+  .inputForm {
+    padding: 0;
+  }
+
+  .search-field .helper-text {
+    font-size: 11px;
+  }
+
+  .filter-title {
+    margin-bottom: 4px;
+  }
+
+  .randomBy > .col {
+    flex: 1 1 100%;
+    padding-right: 0;
+  }
+
+  #wrapper {
+    padding: 10px 36px;
+  }
+
+  .img-hgt {
+    height: 220px;
+  }
+
+  .item {
+    width: 180px;
+    height: 180px;
+  }
+
+  .slider .caption {
+    bottom: 7%;
+  }
+
+  .slider .caption h3 {
+    font-size: 1.2rem;
+    padding: 8px 10px;
+  }
 }
