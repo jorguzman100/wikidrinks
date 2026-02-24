@@ -326,10 +326,13 @@ $(document).ready(function () {
   function getIngredientImage(name, resp) {}
 
   /* --------------- Preparation --------------- */
+<<<<<<< HEAD:front.js
   // Giphy API Key: GIPHY_API_KEY_REDACTED
   // Another Giphy API Key: kYlC1mU6XZtCjjMbaFOQr4Y52hj0VQYx
 
   var giphyAPIKey = "GIPHY_API_KEY_REDACTED";
+=======
+>>>>>>> f7b474b (Express added to safely manage secret keys +  Updated README):public/front.js
   function normalizeText(text) {
     return (text || "")
       .toLowerCase()
@@ -338,12 +341,7 @@ $(document).ready(function () {
   }
 
   function makegiphyURL(query) {
-    return (
-      "https://api.giphy.com/v1/gifs/search?q=" +
-      encodeURIComponent(query) +
-      "&limit=25&rating=g&lang=en&sort=relevant&api_key=" +
-      giphyAPIKey
-    );
+    return "/api/giphy/search?query=" + encodeURIComponent(query);
   }
 
   function matchesIngredientInStep(stepText, ingredientName) {
@@ -530,7 +528,6 @@ $(document).ready(function () {
   }
 
   function instructionsSteps(instructions, drinkInfo) {
-    console.log("instructionsSteps()");
     var instSteps = instructions || "";
     var steps = [];
     var step = "";
@@ -629,21 +626,44 @@ $(document).ready(function () {
         instance.open(0);
       }
     }
-    console.log("steps: ", steps);
   }
 
   /* -------------- Articles ------------- */
+  function renderArticlesNotice(message) {
+    var articlesContent = $("#articlesContent");
+    if (!articlesContent.length) {
+      return;
+    }
+
+    var colDiv = $("<div>");
+    var panelDiv = $("<div>");
+
+    colDiv.attr("class", "col s12");
+    panelDiv.attr("class", "card-panel");
+    panelDiv.text(message);
+
+    colDiv.append(panelDiv);
+    articlesContent.append(colDiv);
+  }
 
   function getArticles(drink) {
+<<<<<<< HEAD:front.js
     var nytApiKey = "NYT_API_KEY_REDACTED";
     var search = drink + "%20cocktail";
     search = search.replace(" ", "%20");
     var queryNYTUrl = `https://api.nytimes.com/svc/search/v2/articlesearch.json?q=${search}&api-key=${nytApiKey}`;
     runAjax("articlesContent", queryNYTUrl, displayArticles);
+=======
+    var queryNYTUrl = "/api/nyt/articles?drink=" + encodeURIComponent(drink);
+    runAjax("articlesContent", queryNYTUrl, displayArticles, null, null, function () {
+      renderArticlesNotice(
+        "Article suggestions are unavailable right now."
+      );
+    });
+>>>>>>> f7b474b (Express added to safely manage secret keys +  Updated README):public/front.js
   }
 
   function displayArticles(name, resp) {
-    //("*********** displayArticles() ***********")
     if (!resp || !resp.response || !resp.response.docs) {
       return;
     }
@@ -730,7 +750,6 @@ $(document).ready(function () {
   }
 
   function uploadSuggested(name, res) {
-    console.log("uploadSuggested()");
     if (!res || !res.drinks || res.drinks.length === 0) {
       return;
     }

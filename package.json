@@ -1,0 +1,17 @@
+{
+  "name": "wikidrinks",
+  "version": "1.0.0",
+  "private": true,
+  "description": "WikiDrinks with Express proxy for Giphy and NYT API keys.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2"
+  }
+}
