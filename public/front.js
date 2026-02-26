@@ -326,13 +326,6 @@ $(document).ready(function () {
   function getIngredientImage(name, resp) {}
 
   /* --------------- Preparation --------------- */
-<<<<<<< HEAD:front.js
-  // Giphy API Key: GIPHY_API_KEY_REDACTED
-  // Another Giphy API Key: kYlC1mU6XZtCjjMbaFOQr4Y52hj0VQYx
-
-  var giphyAPIKey = "GIPHY_API_KEY_REDACTED";
-=======
->>>>>>> f7b474b (Express added to safely manage secret keys +  Updated README):public/front.js
   function normalizeText(text) {
     return (text || "")
       .toLowerCase()
@@ -647,20 +640,12 @@ $(document).ready(function () {
   }
 
   function getArticles(drink) {
-<<<<<<< HEAD:front.js
-    var nytApiKey = "NYT_API_KEY_REDACTED";
-    var search = drink + "%20cocktail";
-    search = search.replace(" ", "%20");
-    var queryNYTUrl = `https://api.nytimes.com/svc/search/v2/articlesearch.json?q=${search}&api-key=${nytApiKey}`;
-    runAjax("articlesContent", queryNYTUrl, displayArticles);
-=======
     var queryNYTUrl = "/api/nyt/articles?drink=" + encodeURIComponent(drink);
     runAjax("articlesContent", queryNYTUrl, displayArticles, null, null, function () {
       renderArticlesNotice(
         "Article suggestions are unavailable right now."
       );
     });
->>>>>>> f7b474b (Express added to safely manage secret keys +  Updated README):public/front.js
   }
 
   function displayArticles(name, resp) {

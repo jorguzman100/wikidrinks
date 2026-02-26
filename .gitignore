@@ -9,3 +9,6 @@ npm-debug.log*
 
 # OS files
 .DS_Store
+
+info.sh
+info.txt
