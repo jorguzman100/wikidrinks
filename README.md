@@ -57,10 +57,9 @@ WikiDrinks is a single-page cocktail finder that mixes recipe search, ingredient
 
 ## 🚀 Live Demo
 
-![Deployment](https://img.shields.io/badge/Deployment-Not%20deployed%20yet-lightgrey?style=for-the-badge)
-[![GitHub](https://img.shields.io/badge/GitHub-Repo-181717?style=for-the-badge&logo=github)](https://github.com/jorguzman100/wikidrinks)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-WikiDrinks-22c55e?style=for-the-badge)](https://wikidrinks.onrender.com/)
 
-No public deployment yet. Local run is the way to go for now.
+[![Visit Portfolio](https://img.shields.io/badge/Visit%20My%20Portfolio-jorgeguzman.dev-22c55e?style=for-the-badge)](https://portfolio.jorgeguzman.dev/)
 
 ---
 
